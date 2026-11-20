@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="RSM-Nav: Room-Level Semantic Map Guided Hierarchical Zero-Shot Object Navigation. Method, simulation results, and real-world navigation videos.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta name="color-scheme" content="light">
+  <title>RSM-Nav: Room-Level Semantic Map Guided Hierarchical Zero-Shot Object Navigation</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="results.css">
+  <script src="site-config.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="nav-wrap">
+      <a class="wordmark" href="#" aria-label="RSM-Nav home"><span class="brand-mark" aria-hidden="true">R</span>RSM-Nav</a>
+      <nav aria-label="Main navigation">
+        <a href="#method">Method</a><a href="#simulation">Simulation</a><a href="#deployment">Real-world</a>
+      </nav>
+      <span class="nav-note">Research project</span>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero wrap" aria-labelledby="paper-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span></span> Zero-shot object navigation</p>
+        <h1 id="paper-title">RSM-Nav<span class="title-dot">.</span></h1>
+        <p class="paper-subtitle">Room-Level Semantic Map Guided Hierarchical Zero-Shot Object Navigation</p>
+        <p class="hero-description">RSM-Nav combines the room-level semantic map with egocentric observations to guide online exploration through coarse-grained cross-room guidance and fine-grained intra-room exploration.</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#videos"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m7 4 9 6-9 6Z" fill="currentColor"/></svg>Watch real-world videos</a>
+          <a class="button secondary" href="#method">Explore the method <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="hero-tags"><span>Room-level semantics</span><span>Hierarchical search</span><span>Wheeled robot deployment</span></div>
+      </div>
+      <figure class="hero-visual">
+        <img src="assets/images/robot.jpg?v=8ab27f724403" alt="The wheeled mobile robot used in RSM-Nav real-world experiments, equipped with an RGB-D camera and LiDAR." fetchpriority="high" width="4096" height="3072">
+        <figcaption><span class="status-dot"></span>RSM-Nav in the real world<span class="caption-index">01 / PLATFORM</span></figcaption>
+      </figure>
+    </section>
+
+    <section class="abstract-section wrap" aria-labelledby="abstract-heading"><p class="eyebrow">Overview</p><h2 id="abstract-heading">Abstract</h2><p>Zero-shot object navigation (ZSON) enables agents to search for target objects without additional policy training, offering strong generalization across diverse object categories. Nevertheless, most agents struggle to leverage experience and commonsense reasoning as humans do, while egocentric observations provide limited spatial layout information, resulting in inefficient exploration across multiple rooms. To overcome these limitations, we propose RSM-Nav, a hierarchical ZSON framework that combines the room-level semantic map with egocentric observations to guide online exploration. Specifically, the proposed method employs a large language model (LLM) to perform semantic reasoning over the room-level semantic map, generating the object spatial probability distribution and room-level candidate exploration nodes (RCENs). Furthermore, real-time observations are fed into a visual language model (VLM) to extract visual-language cues, which are further integrated with the inferred room-level spatial representations to determine promising navigation points. Building on this, we adopt a coarse-to-fine hierarchical search mechanism, which decomposes the ZSON task into coarse-grained cross-room guidance and fine-grained intra-room exploration, avoiding excessive local search while prioritizing the exploration of high potential regions. Experiments on Habitat-Matterport 3D (HM3D) and Matterport 3D (MP3D) show that RSM-Nav achieves state-of-the-art ZSON performance, surpassing the leading ZSON baseline by 4.6% and 23.8% in Success Rate (SR) and Success weighted by Path Length (SPL). In real-world deployment, RSM-Nav achieves a 133.3% relative gain in SR over the baseline. Videos of real-world deployment are available on our website.</p></section>
+
+    <section id="method" class="method-section wrap" aria-labelledby="method-heading">
+      <div class="section-heading"><div><p class="eyebrow">The approach</p><h2 id="method-heading">Room-level semantics.<br>Hierarchical search.</h2></div><p>RSM-Nav employs a coarse-to-fine hierarchical search mechanism comprising coarse-grained cross-room guidance and fine-grained intra-room exploration.</p></div>
+      <div class="method-steps">
+        <article><span class="step-number">01 / SEMANTIC REASONING</span><h3>Room-level semantic map processing</h3><p>The LLM estimates the probability of finding the target object in each room. The object spatial probability distribution is fused with the value map for navigation decision-making, while room-level candidate exploration nodes (RCENs) serve as candidate navigation points for cross-room guidance.</p></article>
+        <article><span class="step-number">02 / VISUAL OBSERVATIONS</span><h3>Real-time observation processing</h3><p>A VLM extracts target-related visual-language cues from real-time observations. Dynamic weighted fusion enables the agent to prioritize egocentric observational results over initial room-level semantic predictions when real-time observation data is reliable.</p></article>
+        <article><span class="step-number">03 / HIERARCHICAL SEARCH</span><h3>Coarse-to-fine navigation</h3><p>The agent switches cyclically between the coarse-grained guidance mode and fine-grained initialization and exploration modes. Once the target object is detected, the system transitions to navigation mode and the agent proceeds to the target object's location.</p></article>
+      </div>
+      <figure class="framework"><img src="assets/images/framework.png?v=5dc2dd43adf5" alt="RSM-Nav pipeline integrating scene-map observations, online egocentric observations, waypoint selection, and hierarchical navigation modes." loading="lazy"><figcaption>Pipeline of RSM-Nav. The system dynamically maintains the frontier map and the value map, and fuses the processed information to select the optimal RCEN and frontier point.</figcaption></figure>
+      <div class="method-figure-grid">
+      <figure class="framework"><img src="assets/images/map-processing.png?v=c69827729dc2" alt="Room-level semantic map processing: object-room probabilities, spatial probability distribution and RCENs." loading="lazy"><figcaption>Room-level semantic map processing.</figcaption></figure>
+      <figure class="framework"><img src="assets/images/hierarchical-search.png?v=313e6f01c4a6" alt="Coarse-to-fine search mechanism switching between guidance, initialization, exploration and target navigation." loading="lazy"><figcaption>Coarse-to-fine hierarchical search mechanism.</figcaption></figure>
+      </div>
+      <div class="deployment-note"><span class="note-symbol" aria-hidden="true">↔</span><p><strong>Remote computation, physical execution.</strong> The navigation system can run on a server that receives observations from the robot and returns motion commands, without running the full system onboard.</p></div>
+    </section>
+
+    <section id="simulation" class="results-section" aria-labelledby="simulation-heading"><div class="wrap">
+        <div class="section-heading"><div><p class="eyebrow">Simulation benchmarks</p><h2 id="simulation-heading">Simulation experiments.</h2></div><p>We compare the object navigation performance of RSM-Nav against baselines on HM3D and MP3D, with 2,000 and 2,195 episodes, respectively.</p></div>
+        <p class="section-prose">As shown in TABLE I, we compare RSM-Nav with baselines on HM3D and MP3D. The results show that RSM-Nav achieves state-of-the-art ZSON performance on all benchmarks, surpassing the leading ZSON baseline by 4.6% (SR) and 23.8% (SPL) on HM3D, and by 2.4% (SR) and 1.7% (SPL) on MP3D. Furthermore, RSM-Nav even surpasses some supervised methods, further demonstrating its superiority.</p>
+        <p class="table-hint">Scroll horizontally to see all columns on a smaller screen.</p>
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Simulation performance comparison"><table id="simulation-comparison" class="simulation-table"><caption>Table I · Object navigation performance on HM3D and MP3D</caption><thead><tr><th scope="col" rowspan="2">Method</th><th scope="col" rowspan="2">Zero-shot</th><th scope="col" rowspan="2">Unsupervised</th><th scope="col" rowspan="2">Room-level<br>semantics</th><th scope="colgroup" colspan="2">HM3D</th><th scope="colgroup" colspan="2">MP3D</th></tr><tr><th scope="col">SR (%) ↑</th><th scope="col">SPL (%) ↑</th><th scope="col">SR (%) ↑</th><th scope="col">SPL (%) ↑</th></tr></thead><tbody>
+<tr><th scope="row">OVRL</th><td class="method-flag no" aria-label="No">×</td><td class="method-flag no" aria-label="No">×</td><td class="method-flag no" aria-label="No">×</td><td>&mdash;</td><td>&mdash;</td><td>28.6</td><td>7.4</td></tr>
+<tr><th scope="row">Habitat-Web</th><td class="method-flag no" aria-label="No">×</td><td class="method-flag no" aria-label="No">×</td><td class="method-flag no" aria-label="No">×</td><td>41.5</td><td>16.0</td><td>31.6</td><td>8.5</td></tr>
+<tr><th scope="row">PONI</th><td class="method-flag no" aria-label="No">×</td><td class="method-flag no" aria-label="No">×</td><td class="method-flag no" aria-label="No">×</td><td>&mdash;</td><td>&mdash;</td><td>31.8</td><td>12.1</td></tr>
+<tr><th scope="row">SemEXP</th><td class="method-flag no" aria-label="No">×</td><td class="method-flag no" aria-label="No">×</td><td class="method-flag no" aria-label="No">×</td><td>&mdash;</td><td>&mdash;</td><td>36.0</td><td>14.4</td></tr>
+<tr><th scope="row">ProcTHOR</th><td class="method-flag no" aria-label="No">×</td><td class="method-flag no" aria-label="No">×</td><td class="method-flag no" aria-label="No">×</td><td>54.4</td><td>31.8</td><td>&mdash;</td><td>&mdash;</td></tr>
+<tr><th scope="row">ProcTHOR-ZS</th><td class="method-flag" aria-label="Yes">✓</td><td class="method-flag no" aria-label="No">×</td><td class="method-flag no" aria-label="No">×</td><td>13.2</td><td>7.7</td><td>&mdash;</td><td>&mdash;</td></tr>
+<tr><th scope="row">ZSON</th><td class="method-flag" aria-label="Yes">✓</td><td class="method-flag no" aria-label="No">×</td><td class="method-flag no" aria-label="No">×</td><td>25.5</td><td>12.6</td><td>15.3</td><td>4.8</td></tr>
+<tr><th scope="row">PixNav</th><td class="method-flag" aria-label="Yes">✓</td><td class="method-flag no" aria-label="No">×</td><td class="method-flag" aria-label="Yes">✓</td><td>37.9</td><td>20.5</td><td>&mdash;</td><td>&mdash;</td></tr>
+<tr><th scope="row">PSL</th><td class="method-flag" aria-label="Yes">✓</td><td class="method-flag no" aria-label="No">×</td><td class="method-flag no" aria-label="No">×</td><td>42.4</td><td>19.2</td><td>18.9</td><td>6.4</td></tr>
+<tr><th scope="row">CoW</th><td class="method-flag" aria-label="Yes">✓</td><td class="method-flag" aria-label="Yes">✓</td><td class="method-flag no" aria-label="No">×</td><td>&mdash;</td><td>&mdash;</td><td>7.4</td><td>3.7</td></tr>
+<tr><th scope="row">VoroNav</th><td class="method-flag" aria-label="Yes">✓</td><td class="method-flag" aria-label="Yes">✓</td><td class="method-flag no" aria-label="No">×</td><td>42.0</td><td>26.0</td><td>&mdash;</td><td>&mdash;</td></tr>
+<tr><th scope="row">L3MVN</th><td class="method-flag" aria-label="Yes">✓</td><td class="method-flag" aria-label="Yes">✓</td><td class="method-flag no" aria-label="No">×</td><td>50.4</td><td>23.1</td><td>34.9</td><td>14.5</td></tr>
+<tr><th scope="row">VLFM</th><td class="method-flag" aria-label="Yes">✓</td><td class="method-flag" aria-label="Yes">✓</td><td class="method-flag no" aria-label="No">×</td><td>52.5</td><td>30.4</td><td>36.4</td><td>17.5</td></tr>
+<tr><th scope="row">OpenFMNav</th><td class="method-flag" aria-label="Yes">✓</td><td class="method-flag" aria-label="Yes">✓</td><td class="method-flag no" aria-label="No">×</td><td>52.5</td><td>24.1</td><td>37.2</td><td>15.7</td></tr>
+<tr><th scope="row">ImagineNav</th><td class="method-flag" aria-label="Yes">✓</td><td class="method-flag" aria-label="Yes">✓</td><td class="method-flag no" aria-label="No">×</td><td>53.0</td><td>23.8</td><td>&mdash;</td><td>&mdash;</td></tr>
+<tr><th scope="row">GAMap</th><td class="method-flag" aria-label="Yes">✓</td><td class="method-flag" aria-label="Yes">✓</td><td class="method-flag no" aria-label="No">×</td><td>53.1</td><td>26.0</td><td>&mdash;</td><td>&mdash;</td></tr>
+<tr><th scope="row">ESC</th><td class="method-flag" aria-label="Yes">✓</td><td class="method-flag" aria-label="Yes">✓</td><td class="method-flag" aria-label="Yes">✓</td><td>39.2</td><td>22.3</td><td>28.7</td><td>14.2</td></tr>
+<tr><th scope="row">RPV-SemNav</th><td class="method-flag" aria-label="Yes">✓</td><td class="method-flag" aria-label="Yes">✓</td><td class="method-flag" aria-label="Yes">✓</td><td>53.9</td><td>30.7</td><td>&mdash;</td><td>&mdash;</td></tr>
+<tr class="ours"><th scope="row">RSM-Nav</th><td class="method-flag" aria-label="Yes">✓</td><td class="method-flag" aria-label="Yes">✓</td><td class="method-flag" aria-label="Yes">✓</td><td>56.4</td><td>38.0</td><td>38.1</td><td>17.8</td></tr>
+        </tbody></table></div>
+        <p class="metric-note">SR: success rate. SPL: success weighted by path length. Higher values are better. ✓ and × indicate whether a method has the listed property. &mdash; denotes an unreported result. RSM-Nav is highlighted.</p>
+
+    </div></section>
+
+    <section class="experiment-intro wrap" id="deployment" aria-labelledby="deployment-heading">
+      <div class="section-heading">
+        <div><p class="eyebrow">From simulation to the physical world</p><h2 id="deployment-heading">Real-world deployment.</h2></div>
+        <p>We deploy RSM-Nav on a wheeled mobile robot and evaluate its object navigation performance in a multi-room indoor environment. The distribution of navigation trajectories is visualized as a density heatmap.</p>
+      </div>
+      <div class="scene-grid">
+        <figure class="scene-figure"><div class="image-stage"><img src="assets/images/scene-map.png?v=7daecfcb9bd4" alt="Surveyed top-down map of the laboratory, corridor, storage room, and lounge." loading="lazy" width="1254" height="1254"></div><figcaption><span class="figure-number">01</span><div><strong>Experimental environment</strong><span>Room structure and connections</span></div></figcaption></figure>
+        <figure class="scene-figure"><div class="image-stage"><img src="assets/images/trajectory-density.png?v=a6ccc4a6300a" alt="Normalized spatial density of the 20 trajectory coordinate sequences over the surveyed floor plan." loading="lazy" width="1507" height="1181"></div><figcaption><span class="figure-number">02</span><div><strong>Trajectory distribution</strong><span>Warmer colors indicate greater path concentration</span></div></figcaption></figure>
+      </div>
+    </section>
+
+    <section id="real-world-metrics" class="real-world-metrics wrap" aria-labelledby="real-world-heading">
+      <div class="results-subheading"><h3 id="real-world-heading">Real-world results</h3><p>We evaluate RSM-Nav and VLFM on 20 episodes each.</p></div>
+      <p class="section-prose">As reported in TABLE VI, RSM-Nav outperforms VLFM across all evaluated metrics. The 75.0% reduction in NFR suggests that coarse-grained semantic guidance alleviates blind exploration and helps the robot reach promising regions, contributing to a 133.3% improvement in SR over VLFM. Meanwhile, reductions of 33.0% in AS and 27.3% in ART indicate that successful searches require fewer navigation steps and room transitions, reflecting improved cross-room search efficiency.</p>
+      <div class="result-highlights"><div><span class="result-number">70<span>%</span></span><p>Success rate</p><span class="result-context">RSM-Nav · 30% for VLFM</span></div><div><span class="result-number">10<span>%</span></span><p>Not Found Rate</p><span class="result-context">RSM-Nav · 40% for VLFM</span></div><div><span class="result-number">89.6</span><p>Average steps</p><span class="result-context">Successful RSM-Nav episodes</span></div></div>
+      <div class="table-scroll" tabindex="0" role="region" aria-label="Real-world performance comparison"><table id="real-world-results"><caption>Table VI · Real-world object navigation performance</caption><thead><tr><th scope="col">Method</th><th scope="col">SR (%) ↑</th><th scope="col">NFR (%) ↓</th><th scope="col">AS ↓</th><th scope="col">ART ↓</th></tr></thead><tbody>
+<tr><th scope="row">VLFM</th><td>30.0</td><td>40.0</td><td>133.7</td><td>2.2</td></tr>
+<tr class="ours"><th scope="row">RSM-Nav</th><td>70.0</td><td>10.0</td><td>89.6</td><td>1.6</td></tr>
+      </tbody></table></div>
+      <p class="metric-note">SR: success rate. NFR: not found rate. AS: average steps. ART: average room transitions, including repeated transitions. AS and ART are calculated over successful episodes only.</p>
+
+    </section>
+
+    <section id="videos" class="videos-section" aria-labelledby="video-heading">
+      <div class="wrap">
+        <div class="section-heading video-heading"><div><p class="eyebrow">Real-world experiments</p><h2 id="video-heading">Watch the search unfold.</h2></div><p>Four real-world navigation sequences, displaying egocentric RGB-D observations alongside the frontier map and the value map.</p></div>
+        <div class="video-grid">
+          <article class="video-card"><div class="video-frame"><video controls playsinline preload="metadata" aria-label="Real-world navigation episode 1"><source src="assets/videos/episode-1.mp4#t=0.1" type="video/mp4">Your browser cannot play this video. <a href="assets/videos/episode-1.mp4">Download episode 1</a>.</video></div><div class="video-info"><div><p class="video-kicker">REAL-WORLD NAVIGATION</p><h3>Episode 01</h3></div><a href="assets/videos/episode-1.mp4" download aria-label="Download episode 1"><span class="video-duration">00:45</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4"/></svg></a></div><p class="video-error" hidden>Video could not load. Use the download button to open the original MP4.</p></article>
+          <article class="video-card"><div class="video-frame"><video controls playsinline preload="metadata" aria-label="Real-world navigation episode 2"><source src="assets/videos/episode-2.mp4#t=0.1" type="video/mp4">Your browser cannot play this video. <a href="assets/videos/episode-2.mp4">Download episode 2</a>.</video></div><div class="video-info"><div><p class="video-kicker">REAL-WORLD NAVIGATION</p><h3>Episode 02</h3></div><a href="assets/videos/episode-2.mp4" download aria-label="Download episode 2"><span class="video-duration">00:43</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4"/></svg></a></div><p class="video-error" hidden>Video could not load. Use the download button to open the original MP4.</p></article>
+          <article class="video-card"><div class="video-frame"><video controls playsinline preload="metadata" aria-label="Real-world navigation episode 3"><source src="assets/videos/episode-3.mp4#t=0.1" type="video/mp4">Your browser cannot play this video. <a href="assets/videos/episode-3.mp4">Download episode 3</a>.</video></div><div class="video-info"><div><p class="video-kicker">REAL-WORLD NAVIGATION</p><h3>Episode 03</h3></div><a href="assets/videos/episode-3.mp4" download aria-label="Download episode 3"><span class="video-duration">00:35</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4"/></svg></a></div><p class="video-error" hidden>Video could not load. Use the download button to open the original MP4.</p></article>
+          <article class="video-card"><div class="video-frame"><video controls playsinline preload="metadata" aria-label="Real-world navigation episode 4"><source src="assets/videos/episode-4.mp4#t=0.1" type="video/mp4">Your browser cannot play this video. <a href="assets/videos/episode-4.mp4">Download episode 4</a>.</video></div><div class="video-info"><div><p class="video-kicker">REAL-WORLD NAVIGATION</p><h3>Episode 04</h3></div><a href="assets/videos/episode-4.mp4" download aria-label="Download episode 4"><span class="video-duration">00:49</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4"/></svg></a></div><p class="video-error" hidden>Video could not load. Use the download button to open the original MP4.</p></article>
+        </div>
+        <p class="video-footnote">Durations refer to the supplied video files, rather than total task execution time.</p>
+      </div>
+    </section>
+  </main>
+  <footer class="wrap"><a class="wordmark" href="#">RSM-Nav</a><p>Room-Level Semantic Map Guided Hierarchical Zero-Shot Object Navigation.</p><a href="#">Back to top ↑</a></footer>
+</body>
+</html>
